@@ -1,0 +1,9 @@
+<Layouts.flash_group flash={@flash} />
+<div class="px-4 py-10 sm:px-6 sm:py-28 lg:px-8 xl:px-28 xl:py-32">
+  <div class="mx-auto max-w-xl lg:mx-0">
+    <.form id="my-form" phx-change="validate" phx-submit="save">
+      <.input type="text" name="search" value="" />
+      <button>Save</button>
+    </.form>
+  </div>
+</div>
