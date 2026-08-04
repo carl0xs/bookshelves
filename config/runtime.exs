@@ -1,5 +1,25 @@
 import Config
 
+# if System.get_env("GOOGLE_BOOKS_API_KEY") == nil do
+#   env_path = Path.expand("../.env", __DIR__)
+#
+#   if File.exists?(env_path) do
+#     env_path
+#     |> File.read!()
+#     |> String.split("\n", trim: true)
+#     |> Enum.each(fn line ->
+#       case String.split(line, "=", parts: 2) do
+#         [key, value] ->
+#           value = value |> String.trim() |> String.replace(~r/^"|"$/, "")
+#           System.put_env(key, value)
+#
+#         _ ->
+#           :ok
+#       end
+#     end)
+#   end
+# end
+#
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
 # system starts, so it is typically used to load production configuration
@@ -21,7 +41,11 @@ if System.get_env("PHX_SERVER") do
 end
 
 config :bookshelve, BookshelveWeb.Endpoint,
-  http: [port: String.to_integer(System.get_env("PORT", "4000"))]
+  http: [port: String.to_integer(System.get_env("PORT", "4001"))]
+
+config :bookshelve,
+  google_books: [api_key: System.get_env("GOOGLE_BOOKS_API_KEY")] 
+
 
 if config_env() == :dev do
   # Reload browser tabs when matching files change.

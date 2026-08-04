@@ -502,4 +502,105 @@ defmodule BookshelveWeb.CoreComponents do
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
   end
+
+  @doc """
+  Renders a modal.
+
+  ## Examples
+
+      <.modal id="book-modal" show={@show_modal} on_cancel={JS.push("close_modal")}>
+        Conteúdo...
+      </.modal>
+
+  """
+
+  attr :id, :string, required: true
+  attr :show, :boolean, default: false
+  attr :on_cancel, JS, default: %JS{}
+  attr :class, :string, default: nil
+
+  slot :inner_block, required: true
+
+  def modal(assigns) do
+    ~H"""
+    <div
+      :if={@show}
+      id={@id}
+      phx-mounted={show_modal(@id)}
+      phx-remove={hide_modal(@id)}
+      data-cancel={JS.exec(@on_cancel, "phx-remove")}
+      class="relative z-50 hidden"
+    >
+      <div
+        id={"#{@id}-bg"}
+        class="fixed inset-0 bg-zinc-900/50 transition-opacity"
+        aria-hidden="true"
+      />
+
+      <div
+        class="fixed inset-0 overflow-y-auto"
+        aria-labelledby={"#{@id}-title"}
+        aria-modal="true"
+        tabindex="0"
+        role="dialog"
+      >
+        <div class="flex min-h-full items-center justify-center p-4">
+          <div
+            id={"#{@id}-container"}
+            class={[
+              "hidden relative rounded-xl bg-white shadow-xl transition",
+              "w-full max-w-2xl",
+              @class
+            ]}
+            phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
+            phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
+            phx-key="escape"
+          >
+            <button
+              type="button"
+              class="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+              phx-click={JS.exec("data-cancel", to: "##{@id}")}
+            >
+              ✕
+            </button>
+
+            <div class="p-6 bg-[gray]">
+              {render_slot(@inner_block)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  def show_modal(js \\ %JS{}, id) do
+    js
+    |> JS.show(to: "##{id}")
+    |> JS.show(
+      to: "##{id}-bg",
+      transition: {"transition-all transform ease-out duration-300", "opacity-0", "opacity-100"}
+    )
+    |> JS.show(
+      to: "##{id}-container",
+      transition:
+        {"transition-all transform ease-out duration-300", "opacity-0 scale-95",
+         "opacity-100 scale-100"}
+    )
+  end
+
+  def hide_modal(js \\ %JS{}, id) do
+    js
+    |> JS.hide(
+      to: "##{id}-bg",
+      transition: {"transition-all transform ease-in duration-200", "opacity-100", "opacity-0"}
+    )
+    |> JS.hide(
+      to: "##{id}-container",
+      transition:
+        {"transition-all transform ease-in duration-200", "opacity-100 scale-100",
+         "opacity-0 scale-95"}
+    )
+    |> JS.hide(to: "##{id}")
+  end
 end

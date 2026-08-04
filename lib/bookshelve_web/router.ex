@@ -17,16 +17,16 @@ defmodule BookshelveWeb.Router do
   scope "/", BookshelveWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", HomeLive
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", BookshelveWeb do
+  # scope "/api", BookshelvWeb do
   #   pipe_through :api
   # end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
-  if Application.compile_env(:bookshelve, :dev_routes) do
+  if Application.compile_env(:Bookshelv, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
     # it behind authentication and allow only admins to access it.
     # If your application does not have an admins-only section yet,
