@@ -1,0 +1,3 @@
+defmodule Bookshelves.Mailer do
+  use Swoosh.Mailer, otp_app: :bookshelves
+end

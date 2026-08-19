@@ -1,4 +1,4 @@
-defmodule BookshelveWeb.CoreComponents do
+defmodule BookshelvesWeb.CoreComponents do
   @moduledoc """
   Provides core UI components.
 
@@ -27,7 +27,7 @@ defmodule BookshelveWeb.CoreComponents do
 
   """
   use Phoenix.Component
-  use Gettext, backend: BookshelveWeb.Gettext
+  use Gettext, backend: BookshelvesWeb.Gettext
 
   alias Phoenix.LiveView.JS
 
@@ -490,9 +490,9 @@ defmodule BookshelveWeb.CoreComponents do
     # with our gettext backend as first argument. Translations are
     # available in the errors.po file (as we use the "errors" domain).
     if count = opts[:count] do
-      Gettext.dngettext(BookshelveWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(BookshelvesWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(BookshelveWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(BookshelvesWeb.Gettext, "errors", msg, opts)
     end
   end
 

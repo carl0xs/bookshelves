@@ -1,4 +1,4 @@
-defmodule BookshelveWeb.Repo.Migrations.CreateReadings do
+defmodule BookshelvesWeb.Repo.Migrations.CreateReadings do
   use Ecto.Migration
 
   def change do

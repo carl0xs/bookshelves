@@ -1,0 +1,22 @@
+<Layouts.app flash={@flash}>
+  <div class="px-4">
+    <BookComponents.search_form />
+    <BookComponents.search_results results={@result} />
+  </div>
+
+  <h4 class="font-bold">Current Reads</h4>
+
+  <%= if @selected_book do %>
+    <BookComponents.book_detail_modal book={@selected_book} show={@show_modal} />
+    <BookComponents.progress_modal book={@selected_book} show={@show_modal_progress} />
+  <% end %>
+
+  <div class="flex gap-2">
+    <span><.icon name="hero-bookmark-square" /></span>
+    <span>{length(@readings)} obras</span>
+  </div>
+
+  <div class="grid grid-cols-6 gap-[150px]">
+    <BookComponents.book_card :for={reading <- @readings} reading={reading} />
+  </div>
+</Layouts.app>

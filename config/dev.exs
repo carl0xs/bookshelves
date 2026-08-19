@@ -1,8 +1,8 @@
 import Config
 
 # Configure your database
-config :bookshelve, Bookshelve.Repo,
-  database: Path.expand("../bookshelve_dev.db", __DIR__),
+config :bookshelves, Bookshelves.Repo,
+  database: Path.expand("../bookshelves_dev.db", __DIR__),
   pool_size: 5,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true
@@ -13,7 +13,7 @@ config :bookshelve, Bookshelve.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
-config :bookshelve, BookshelveWeb.Endpoint,
+config :bookshelves, BookshelvesWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}],
@@ -22,8 +22,8 @@ config :bookshelve, BookshelveWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "slnkYQSs2CuTrOfcRdSf8U3UmVvhdl2c4L4X4/lgogoL62DmX6A6bw8RYUjQ6KKF",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:bookshelve, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:bookshelve, ~w(--watch)]}
+    esbuild: {Esbuild, :install_and_run, [:bookshelves, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:bookshelves, ~w(--watch)]}
   ]
 
 # ## SSL Support
@@ -50,7 +50,7 @@ config :bookshelve, BookshelveWeb.Endpoint,
 # different ports.
 
 # Enable dev routes for dashboard and mailbox
-config :bookshelve, dev_routes: true
+config :bookshelves, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :default_formatter, format: "[$level] $message\n"

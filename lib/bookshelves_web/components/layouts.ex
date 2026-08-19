@@ -1,9 +1,9 @@
-defmodule BookshelveWeb.Layouts do
+defmodule BookshelvesWeb.Layouts do
   @moduledoc """
   This module holds layouts and related functionality
   used by your application.
   """
-  use BookshelveWeb, :html
+  use BookshelvesWeb, :html
 
   # Embed all files in layouts/* within this module.
   # The default root.html.heex file contains the HTML

@@ -1,4 +1,4 @@
-# Bookshelve
+# Bookshelves
 
 To start your Phoenix server:
 

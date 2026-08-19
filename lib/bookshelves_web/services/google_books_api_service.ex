@@ -1,10 +1,11 @@
-defmodule BookshelveWeb.Services.GoogleBooksApi do
-  def call(title) do
+defmodule BookshelvesWeb.Services.GoogleBooksApi do
+  def call(title, maxResults \\ 5) do
     case Req.get(
            "https://www.googleapis.com/books/v1/volumes",
            params: [
              q: title,
-             key: Application.get_env(:bookshelve, :google_books)[:api_key]
+             maxResults: maxResults,
+             key: Application.get_env(:bookshelves, :google_books)[:api_key]
            ]
          ) do
       {:ok, %{body: body}} ->

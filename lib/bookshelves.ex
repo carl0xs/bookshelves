@@ -1,6 +1,6 @@
-defmodule Bookshelve do
+defmodule Bookshelves do
   @moduledoc """
-  Bookshelve keeps the contexts that define your domain
+  Bookshelves keeps the contexts that define your domain
   and business logic.
 
   Contexts are also responsible for managing your data, regardless

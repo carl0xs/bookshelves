@@ -1,5 +1,5 @@
-defmodule BookshelveWeb.PageControllerTest do
-  use BookshelveWeb.ConnCase
+defmodule BookshelvesWeb.PageControllerTest do
+  use BookshelvesWeb.ConnCase
 
   test "GET /", %{conn: conn} do
     conn = get(conn, ~p"/")

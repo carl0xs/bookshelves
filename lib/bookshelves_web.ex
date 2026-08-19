@@ -1,12 +1,12 @@
-defmodule BookshelveWeb do
+defmodule BookshelvesWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
   as controllers, components, channels, and so on.
 
   This can be used in your application as:
 
-      use BookshelveWeb, :controller
-      use BookshelveWeb, :html
+      use BookshelvesWeb, :controller
+      use BookshelvesWeb, :html
 
   The definitions below will be executed for every controller,
   component, etc, so keep them short and clean, focused
@@ -40,7 +40,7 @@ defmodule BookshelveWeb do
     quote do
       use Phoenix.Controller, formats: [:html, :json]
 
-      use Gettext, backend: BookshelveWeb.Gettext
+      use Gettext, backend: BookshelvesWeb.Gettext
 
       import Plug.Conn
 
@@ -80,16 +80,17 @@ defmodule BookshelveWeb do
   defp html_helpers do
     quote do
       # Translation
-      use Gettext, backend: BookshelveWeb.Gettext
+      use Gettext, backend: BookshelvesWeb.Gettext
 
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components
-      import BookshelveWeb.CoreComponents
+      import BookshelvesWeb.CoreComponents
 
       # Common modules used in templates
       alias Phoenix.LiveView.JS
-      alias BookshelveWeb.Layouts
+      alias BookshelvesWeb.Layouts
+      alias BookshelvesWeb.BookComponents
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
@@ -99,9 +100,9 @@ defmodule BookshelveWeb do
   def verified_routes do
     quote do
       use Phoenix.VerifiedRoutes,
-        endpoint: BookshelveWeb.Endpoint,
-        router: BookshelveWeb.Router,
-        statics: BookshelveWeb.static_paths()
+        endpoint: BookshelvesWeb.Endpoint,
+        router: BookshelvesWeb.Router,
+        statics: BookshelvesWeb.static_paths()
     end
   end
 

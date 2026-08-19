@@ -1,11 +1,11 @@
-defmodule BookshelveWeb.Router do
-  use BookshelveWeb, :router
+defmodule BookshelvesWeb.Router do
+  use BookshelvesWeb, :router
 
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, html: {BookshelveWeb.Layouts, :root}
+    plug :put_root_layout, html: {BookshelvesWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -14,7 +14,7 @@ defmodule BookshelveWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", BookshelveWeb do
+  scope "/", BookshelvesWeb do
     pipe_through :browser
 
     live "/", HomeLive
@@ -37,7 +37,7 @@ defmodule BookshelveWeb.Router do
     scope "/dev" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: BookshelveWeb.Telemetry
+      live_dashboard "/dashboard", metrics: BookshelvesWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end
