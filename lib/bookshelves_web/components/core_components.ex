@@ -533,7 +533,7 @@ defmodule BookshelvesWeb.CoreComponents do
     >
       <div
         id={"#{@id}-bg"}
-        class="fixed inset-0 bg-zinc-900/50 transition-opacity"
+        class="fixed inset-0 bg-base-300/70 transition-opacity"
         aria-hidden="true"
       />
 
@@ -544,12 +544,11 @@ defmodule BookshelvesWeb.CoreComponents do
         tabindex="0"
         role="dialog"
       >
-        <div class="flex min-h-full items-center justify-center p-4">
+        <div class="flex min-h-full items-center justify-center p-4 sm:p-6">
           <div
             id={"#{@id}-container"}
             class={[
-              "hidden relative rounded-xl bg-white shadow-xl transition",
-              "w-full max-w-2xl",
+              "hidden relative w-full max-w-lg rounded-box border border-base-300 bg-base-100 shadow-xl transition sm:max-w-xl",
               @class
             ]}
             phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
@@ -558,13 +557,14 @@ defmodule BookshelvesWeb.CoreComponents do
           >
             <button
               type="button"
-              class="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+              class="btn btn-ghost btn-sm btn-circle absolute right-3 top-3"
               phx-click={JS.exec("data-cancel", to: "##{@id}")}
+              aria-label={gettext("Fechar")}
             >
-              ✕
+              <.icon name="hero-x-mark" class="size-5" />
             </button>
 
-            <div class="p-6 bg-[gray]">
+            <div class="p-5 sm:p-6">
               {render_slot(@inner_block)}
             </div>
           </div>

@@ -8,7 +8,10 @@ defmodule Bookshelves.Reading do
     field :current_page, :integer, default: 0
     field :total_pages, :integer, default: 0
     field :thumbnail, :string
-    field :status, Ecto.Enum, values: [want_read: "want_read", read: "read", reading: "reading", droped: "droped"]
+
+    field :status, Ecto.Enum,
+      values: [want_read: "want_read", read: "read", reading: "reading", droped: "droped"]
+
     field :description, :string
     field :tags, :string
     field :published_at, :string
@@ -34,6 +37,26 @@ defmodule Bookshelves.Reading do
   end
 
   def progress(reading) do
-    Kernel.round((reading.current_page || 0 / reading.total_pages || 0) * 100)
+    total = reading.total_pages || 0
+
+    if total > 0 do
+      current = reading.current_page || 0
+      Kernel.round(current * 100 / total)
+    else
+      0
+    end
   end
+
+  def media_type(%__MODULE__{tags: tags}) do
+    if tags && String.contains?(String.downcase(tags), "manga"), do: :manga, else: :book
+  end
+
+  @status_labels [
+    reading: "Lendo",
+    want_read: "Quero ler",
+    read: "Concluído",
+    droped: "Dropado"
+  ]
+
+  def status_label(status), do: Keyword.get(@status_labels, status)
 end

@@ -17,7 +17,7 @@ defmodule BookshelvesWeb.Services.GoogleBooksApi do
   end
 
   def parse_result(items) do
-    Enum.map(items, fn item ->
+    Enum.map(items || [], fn item ->
       %{
         id: item["id"],
         title: get_in(item, ["volumeInfo", "title"]),
