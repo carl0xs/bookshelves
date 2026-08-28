@@ -17,7 +17,7 @@ defmodule BookshelvesWeb.HomeLive do
     {:ok,
      socket
      |> assign(
-       page_title: "Minha estante",
+       page_title: "My bookcase",
        result: [],
        query: "",
        search_limit: @search_page_size,
@@ -86,7 +86,7 @@ defmodule BookshelvesWeb.HomeLive do
   def handle_event("select_book", %{"id" => id}, socket) do
     case find_in_results(socket.assigns.result, id) || find_reading(id) do
       nil ->
-        {:noreply, put_flash(socket, :error, "Obra não encontrada")}
+        {:noreply, put_flash(socket, :error, "Title not found")}
 
       %{status: status} = book when not is_nil(status) ->
         {:noreply, open_edit_modal(socket, book)}
@@ -137,10 +137,10 @@ defmodule BookshelvesWeb.HomeLive do
          |> assign(result: [], query: "", can_load_more: false, readings: readings)
          |> refresh_filtered()
          |> close_modal()
-         |> put_flash(:info, "Adicionado à estante")}
+         |> put_flash(:info, "Added to Bookcase")}
 
       {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, "Não foi possível salvar a obra")}
+        {:noreply, put_flash(socket, :error, "Could not save the title")}
     end
   end
 
@@ -181,7 +181,7 @@ defmodule BookshelvesWeb.HomeLive do
          |> put_flash(:info, "Leitura atualizada")}
 
       {:error, _} ->
-        {:noreply, put_flash(socket, :error, "Não foi possível atualizar a leitura")}
+        {:noreply, put_flash(socket, :error, "Coudl not updated the title")}
     end
   end
 
@@ -193,7 +193,7 @@ defmodule BookshelvesWeb.HomeLive do
         {:noreply,
          socket
          |> close_modal()
-         |> put_flash(:error, "Leitura não encontrada")}
+         |> put_flash(:error, "Title not found")}
 
       reading ->
         case Repo.delete(reading) do
@@ -208,7 +208,7 @@ defmodule BookshelvesWeb.HomeLive do
              |> put_flash(:info, "Leitura excluída")}
 
           {:error, _} ->
-            {:noreply, put_flash(socket, :error, "Não foi possível excluir a leitura")}
+            {:noreply, put_flash(socket, :error, "Could not drop the title")}
         end
     end
   end

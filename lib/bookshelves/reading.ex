@@ -52,10 +52,10 @@ defmodule Bookshelves.Reading do
   end
 
   @status_labels [
-    reading: "Lendo",
-    want_read: "Quero ler",
-    read: "Concluído",
-    droped: "Dropado"
+    reading:    "Reading",
+    want_read:  "Want Read",
+    read:       "Read",
+    droped:     "Droped"
   ]
 
   def status_label(status), do: Keyword.get(@status_labels, status)

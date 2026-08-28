@@ -8,33 +8,33 @@ defmodule BookshelvesWeb.BookComponents do
   alias Bookshelves.Reading
 
   @filters [
-    {"all", "Todos"},
-    {"reading", "Lendo"},
-    {"want_read", "Interesse"},
-    {"read", "Lido"},
-    {"droped", "Dropado"}
+    {"all",       "All"       },
+    {"reading",   "Reading"   },
+    {"want_read", "Want_read" },
+    {"read",      "Read"      },
+    {"droped",    "Droped"    }
   ]
 
   @media_filters [
-    {"all", "Todos"},
-    {"books", "Livros"},
-    {"manga", "Mangás"}
+      {"all",   "All"  },
+      {"books", "Books"},
+      {"manga", "Manga"}
   ]
 
   @status_options [
-    {"reading", "Lendo"},
-    {"want_read", "Quero ler"},
-    {"read", "Concluído"},
-    {"droped", "Dropado"}
+    {"reading",   "Reading",  },
+    {"want_read", "Want_read",},
+    {"read",      "Read",     },
+    {"droped",    "Droped",   }
   ]
 
   attr :query, :string, default: ""
 
   def search_form(assigns) do
     ~H"""
-    <section id="busca" class="mx-auto w-full max-w-xl">
+    <section id="busca" class="w-full max-w-xl">
       <.form for={%{}} phx-submit="search" id="search-form" class="relative">
-        <label for="search-title" class="sr-only">Buscar livros e mangás</label>
+        <label for="search-title" class="sr-only">search books</label>
         <.icon
           name="hero-magnifying-glass"
           class="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-base-content/50"
@@ -44,7 +44,7 @@ defmodule BookshelvesWeb.BookComponents do
           type="search"
           name="title"
           value={@query}
-          placeholder="Buscar livros e mangás…"
+          placeholder="search books…"
           autocomplete="off"
           class="w-full rounded-md border border-white/20 bg-base-100 py-2.5 pl-10 pr-4 text-sm text-base-content placeholder:text-base-content/40 outline-none transition focus:border-white focus:ring-1 focus:ring-white/40"
         />
@@ -96,7 +96,7 @@ defmodule BookshelvesWeb.BookComponents do
           phx-click="load_more"
           class="w-full rounded-md px-3 py-2 text-sm font-medium text-white transition hover:bg-white/10"
         >
-          Ver mais
+          See more
         </button>
       </div>
     </div>
@@ -114,12 +114,12 @@ defmodule BookshelvesWeb.BookComponents do
       |> assign(:media_filters, @media_filters)
 
     ~H"""
-    <div class="mt-10 space-y-3">
+    <div class="mt-6 space-y-3">
       <h2
         id="minha-estante"
         class="text-2xl font-semibold tracking-tight text-base-content sm:text-[1.65rem]"
       >
-        Minha estante
+        Bookcase
       </h2>
 
       <nav id="shelf-filters" class="filter-bar scroll-thin" aria-label="Filtros por status">
@@ -138,7 +138,7 @@ defmodule BookshelvesWeb.BookComponents do
       <nav
         id="media-filter"
         class="filter-bar filter-bar-sm scroll-thin"
-        aria-label="Filtro por tipo"
+        aria-label="filter by type"
       >
         <button
           :for={{value, label} <- @media_filters}
@@ -154,7 +154,7 @@ defmodule BookshelvesWeb.BookComponents do
 
       <p class="flex items-center gap-1.5 text-sm text-base-content/70">
         <.icon name="hero-bookmark-square" class="size-4 text-base-content/50" />
-        <span>{ngettext("%{count} obra", "%{count} obras", @count, count: @count)}</span>
+        <span>{ngettext("%{count} title", "%{count} titles", @count, count: @count)}</span>
       </p>
     </div>
     """
@@ -447,7 +447,7 @@ defmodule BookshelvesWeb.BookComponents do
               for="reading-page"
               class="mb-2 block text-xs font-medium uppercase tracking-wide text-base-content/50"
             >
-              Página atual
+              Current Page
             </label>
             <div class="flex items-center gap-2">
               <input
@@ -466,7 +466,7 @@ defmodule BookshelvesWeb.BookComponents do
           <div class="space-y-2">
             <div class="flex items-baseline justify-between gap-2">
               <span class="text-xs font-medium uppercase tracking-wide text-base-content/50">
-                Progresso
+                Progress
               </span>
               <span id="draft-progress-label" class="text-sm tabular-nums text-white">
                 {@draft_progress}%
@@ -486,7 +486,7 @@ defmodule BookshelvesWeb.BookComponents do
 
           <div class="flex flex-wrap items-center gap-2 pt-1">
             <button id="save-reading-btn" type="submit" class="btn btn-primary">
-              Salvar
+              Save
             </button>
             <button
               id="cancel-reading-btn"
@@ -494,7 +494,7 @@ defmodule BookshelvesWeb.BookComponents do
               phx-click={JS.exec("data-cancel", to: "#book-detail-modal")}
               class="btn btn-ghost"
             >
-              Cancelar
+              Cancel
             </button>
             <button
               id="delete-reading-btn"
@@ -503,7 +503,7 @@ defmodule BookshelvesWeb.BookComponents do
               data-confirm="Excluir esta leitura da estante?"
               class="btn btn-ghost btn-sm ml-auto text-error"
             >
-              Excluir
+              Delete
             </button>
           </div>
         </.form>
@@ -520,6 +520,6 @@ defmodule BookshelvesWeb.BookComponents do
   defp format_authors(authors) when is_binary(authors), do: authors
   defp format_authors(_), do: "Autor desconhecido"
 
-  defp media_label(:manga), do: "Mangá"
-  defp media_label(_), do: "Livro"
+  defp media_label(:manga), do: "Manga"
+  defp media_label(_), do: "Book"
 end
