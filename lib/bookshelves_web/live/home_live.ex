@@ -11,29 +11,35 @@ defmodule BookshelvesWeb.HomeLive do
   @search_max 40
 
   @impl true
-  def mount(_params, _session, socket) do
-    readings = list_readings()
+  def mount(params, _session, socket) do
+    page = list_readings(params)
 
     {:ok,
-     socket
-     |> assign(
-       page_title: "My bookcase",
-       result: [],
-       query: "",
-       search_limit: @search_page_size,
-       can_load_more: false,
-       status_filter: "all",
-       media_filter: "all",
-       readings: readings,
-       filtered_readings: readings,
-       show_modal: false,
-       selected_book: nil,
-       modal_mode: :edit,
-       draft_status: nil,
-       draft_page: 0,
-       draft_progress: 0,
-       draft_tag: "book"
-     )}
+      socket
+      |> assign(
+        page_title: "My bookcase",
+        result: [],
+        query: "",
+        search_limit: @search_page_size,
+        can_load_more: false,
+        status_filter: "all",
+        media_filter: "books",
+        readings: page.entries,
+        filtered_readings: page.entries,
+        show_modal: false,
+        selected_book: nil,
+        modal_mode: :edit,
+        draft_status: nil,
+        draft_page: 0,
+        draft_progress: 0,
+        draft_tag: "book",
+        page_number: page.page_number,
+        page_size: page.page_size,
+        total_pages: page.total_pages,
+        total_entries: page.total_entries
+      )
+      |> refresh_filtered()
+    }
   end
 
   @impl true
@@ -130,7 +136,7 @@ defmodule BookshelvesWeb.HomeLive do
 
     case Repo.insert(Reading.changeset(%Reading{}, attrs)) do
       {:ok, _reading} ->
-        readings = list_readings()
+        readings = list_readings(params)
 
         {:noreply,
          socket
@@ -171,7 +177,7 @@ defmodule BookshelvesWeb.HomeLive do
 
     case update_reading(book.id, attrs) do
       {:ok, _} ->
-        readings = list_readings()
+        readings = list_readings(params)
 
         {:noreply,
          socket
@@ -185,7 +191,7 @@ defmodule BookshelvesWeb.HomeLive do
     end
   end
 
-  def handle_event("delete_reading", _, socket) do
+  def handle_event("delete_reading", params, socket) do
     book = socket.assigns.selected_book
 
     case book && Repo.get(Reading, book.id) do
@@ -198,7 +204,7 @@ defmodule BookshelvesWeb.HomeLive do
       reading ->
         case Repo.delete(reading) do
           {:ok, _} ->
-            readings = list_readings()
+            readings = list_readings(params)
 
             {:noreply,
              socket
@@ -290,10 +296,10 @@ defmodule BookshelvesWeb.HomeLive do
   defp clamp_page(page, total) when total > 0, do: page |> max(0) |> min(total)
   defp clamp_page(page, _total), do: max(page, 0)
 
-  defp list_readings do
+  defp list_readings(params) do
     Reading
-    |> order_by([r], desc: r.updated_at)
-    |> Repo.all()
+    |> order_by([r], desc: r.inserted_at)
+    |> Repo.paginate(params)
   end
 
   defp refresh_filtered(socket) do
@@ -352,5 +358,37 @@ defmodule BookshelvesWeb.HomeLive do
     |> then(&Repo.get(Reading, &1))
     |> Reading.changeset(attrs)
     |> Repo.update()
+  end
+
+  def handle_event("nav", %{"page" => page}, socket) do
+    {:noreply, push_patch(socket, to: ~p"/?page=#{page}")}
+  end
+
+  def handle_params(%{"page" => page}, _uri, socket) do
+    assigns = get_and_assign_page(page)
+    {:noreply, assign(socket, assigns) |> refresh_filtered()}
+  end
+
+  def handle_params(_params, _uri, socket) do
+    assigns = get_and_assign_page(nil)
+    {:noreply, assign(socket, assigns) |> refresh_filtered()}
+  end
+
+  defp get_and_assign_page(page_number) do
+    %{
+      entries: entries,
+      page_number: page_number,
+      page_size: page_size,
+      total_entries: total_entries,
+      total_pages: total_pages
+    } = list_readings(page: page_number)
+
+    [
+      readings: entries,
+      page_number: page_number,
+      page_size: page_size,
+      total_entries: total_entries,
+      total_pages: total_pages
+    ]
   end
 end

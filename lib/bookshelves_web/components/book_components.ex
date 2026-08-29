@@ -61,7 +61,7 @@ defmodule BookshelvesWeb.BookComponents do
     <div
       :if={@results != []}
       id="search-results"
-      class="scroll-thin mx-auto mt-3 max-h-72 w-full max-w-xl overflow-y-auto rounded-md border border-base-300 bg-base-100"
+      class="scroll-thin max-h-72 w-full max-w-xl overflow-y-auto rounded-md border border-base-300 bg-base-100"
     >
       <ul class="divide-y divide-base-300" role="listbox" aria-label="Resultados da busca">
         <li
@@ -105,7 +105,7 @@ defmodule BookshelvesWeb.BookComponents do
 
   attr :status_filter, :string, required: true
   attr :media_filter, :string, required: true
-  attr :count, :integer, required: true
+  attr :total_readings, :integer, required: true
 
   def shelf_filters(assigns) do
     assigns =
@@ -154,7 +154,7 @@ defmodule BookshelvesWeb.BookComponents do
 
       <p class="flex items-center gap-1.5 text-sm text-base-content/70">
         <.icon name="hero-bookmark-square" class="size-4 text-base-content/50" />
-        <span>{ngettext("%{count} title", "%{count} titles", @count, count: @count)}</span>
+        <span>{ngettext("%{total_readings} title", "%{total_readings} titles", @total_readings, total_readings: @total_readings)}</span>
       </p>
     </div>
     """
@@ -170,15 +170,12 @@ defmodule BookshelvesWeb.BookComponents do
         "mt-6",
         @readings == [] && "py-16 text-center",
         @readings != [] &&
-          "grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
+          "grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 sm:gap-x-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7"
       ]}
     >
       <%= if @readings == [] do %>
         <div class="mx-auto max-w-sm space-y-2">
-          <p class="text-lg text-base-content">Estante vazia por aqui</p>
-          <p class="text-sm text-base-content/70">
-            Use a busca acima para adicionar um livro ou mangá à sua estante.
-          </p>
+          <p class="text-lg text-base-content">Bookcase blank</p>
         </div>
       <% else %>
         <.book_card :for={reading <- @readings} reading={reading} />
