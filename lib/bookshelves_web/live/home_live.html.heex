@@ -9,7 +9,7 @@
     media_filter={@media_filter}
     total_readings={@total_entries}
   />
-  <div>
+  <div class="flex justify-between">
     <nav class="border-t border-gray-200">
         <ul class="flex my-2">
           <li class="">
@@ -25,8 +25,19 @@
           </li>
         </ul>
     </nav>
+    <form phx-change="filter_title">
+      <input
+        id="title-filter"
+        type="search"
+        name="title"
+        value={@title_filter}
+        placeholder="search books…"
+        phx-debounce="300"
+        class="rounded-md border border-white/20 py-2.5 pl-5 text-sm"
+      />
+    </form>
   </div>
-  <BookComponents.shelf_grid readings={@filtered_readings} />
+  <BookComponents.shelf_grid readings={@readings} />
 
   <%= if @selected_book do %>
     <BookComponents.book_detail_modal

@@ -23,7 +23,8 @@ defmodule BookshelvesWeb.HomeLive do
         search_limit: @search_page_size,
         can_load_more: false,
         status_filter: "all",
-        media_filter: "books",
+        media_filter: "book",
+        title_filter: nil,
         readings: page.entries,
         filtered_readings: page.entries,
         show_modal: false,
@@ -78,6 +79,16 @@ defmodule BookshelvesWeb.HomeLive do
        )}
     end
   end
+
+  def handle_event("filter_title", %{"title" => title}, socket) do
+    {:noreply,
+      push_patch(
+        socket,
+        to:
+        ~p"/?page=1&status=#{socket.assigns.status_filter}&media=#{socket.assigns.media_filter}&title=#{title}"
+      )}
+  end
+
 
   def handle_event("filter_status", %{"filter" => filter}, socket) do
     socket = assign(socket, status_filter: filter)
@@ -296,8 +307,9 @@ defmodule BookshelvesWeb.HomeLive do
   defp clamp_page(page, total) when total > 0, do: page |> max(0) |> min(total)
   defp clamp_page(page, _total), do: max(page, 0)
 
-  defp list_readings(params) do
+  defp list_readings(params, status_filter \\ "all", media_filter \\ "book", title \\ nil) do
     Reading
+    |> filter_title(title)
     |> order_by([r], desc: r.inserted_at)
     |> Repo.paginate(params)
   end
@@ -313,6 +325,9 @@ defmodule BookshelvesWeb.HomeLive do
     assign(socket, filtered_readings: filtered)
   end
 
+  defp filter_title(query, nil), do: query
+  defp filter_title(query, title) do
+    where(query, [r], like(r.title, ^"%#{title}%"))
   defp apply_filters(readings, status_filter, media_filter) do
     readings
     |> filter_by_status(status_filter)

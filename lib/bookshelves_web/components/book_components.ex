@@ -17,7 +17,7 @@ defmodule BookshelvesWeb.BookComponents do
 
   @media_filters [
       {"all",   "All"  },
-      {"books", "Books"},
+      {"book", "Book"},
       {"manga", "Manga"}
   ]
 
@@ -44,7 +44,7 @@ defmodule BookshelvesWeb.BookComponents do
           type="search"
           name="title"
           value={@query}
-          placeholder="search books…"
+          placeholder="search and add books…"
           autocomplete="off"
           class="w-full rounded-md border border-white/20 bg-base-100 py-2.5 pl-10 pr-4 text-sm text-base-content placeholder:text-base-content/40 outline-none transition focus:border-white focus:ring-1 focus:ring-white/40"
         />
