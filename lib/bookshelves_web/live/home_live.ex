@@ -91,13 +91,21 @@ defmodule BookshelvesWeb.HomeLive do
 
 
   def handle_event("filter_status", %{"filter" => filter}, socket) do
-    socket = assign(socket, status_filter: filter)
-    {:noreply, refresh_filtered(socket)}
+    {:noreply,
+     push_patch(
+       socket,
+       to:
+         ~p"/?page=1&status=#{filter}&media=#{socket.assigns.media_filter}"
+     )}
   end
 
   def handle_event("filter_media", %{"filter" => filter}, socket) do
-    socket = assign(socket, media_filter: filter)
-    {:noreply, refresh_filtered(socket)}
+    {:noreply,
+     push_patch(
+       socket,
+       to:
+         ~p"/?page=1&status=#{socket.assigns.status_filter}&media=#{filter}"
+     )}
   end
 
   def handle_event("select_book", %{"id" => id}, socket) do
@@ -310,17 +318,14 @@ defmodule BookshelvesWeb.HomeLive do
   defp list_readings(params, status_filter \\ "all", media_filter \\ "book", title \\ nil) do
     Reading
     |> filter_title(title)
+    |> filter_status(status_filter)
+    |> filter_media(media_filter)
     |> order_by([r], desc: r.inserted_at)
     |> Repo.paginate(params)
   end
 
   defp refresh_filtered(socket) do
-    filtered =
-      apply_filters(
-        socket.assigns.readings,
-        socket.assigns.status_filter,
-        socket.assigns.media_filter
-      )
+    filtered = socket.assigns.readings
 
     assign(socket, filtered_readings: filtered)
   end
@@ -328,37 +333,20 @@ defmodule BookshelvesWeb.HomeLive do
   defp filter_title(query, nil), do: query
   defp filter_title(query, title) do
     where(query, [r], like(r.title, ^"%#{title}%"))
-  defp apply_filters(readings, status_filter, media_filter) do
-    readings
-    |> filter_by_status(status_filter)
-    |> filter_by_media(media_filter)
   end
 
-  defp filter_by_status(readings, "all"), do: readings
+  defp filter_status(query, "all"), do: query
+  defp filter_status(query, status) do 
+    where(query, [r], r.status == ^String.to_existing_atom(status))
+  end
 
-  defp filter_by_status(readings, "reading"),
-    do: Enum.filter(readings, &(&1.status == :reading))
-
-  defp filter_by_status(readings, "want_read"),
-    do: Enum.filter(readings, &(&1.status == :want_read))
-
-  defp filter_by_status(readings, "read"),
-    do: Enum.filter(readings, &(&1.status == :read))
-
-  defp filter_by_status(readings, "droped"),
-    do: Enum.filter(readings, &(&1.status == :droped))
-
-  defp filter_by_status(readings, _), do: readings
-
-  defp filter_by_media(readings, "all"), do: readings
-
-  defp filter_by_media(readings, "books"),
-    do: Enum.filter(readings, &(Reading.media_type(&1) == :book))
-
-  defp filter_by_media(readings, "manga"),
-    do: Enum.filter(readings, &(Reading.media_type(&1) == :manga))
-
-  defp filter_by_media(readings, _), do: readings
+  defp filter_media(query, "all"), do: query
+  defp filter_media(query, "book") do
+    where(query, [r], r.tags == "book")
+  end
+  defp filter_media(query, "manga") do
+    where(query, [r], r.tags == "manga")
+  end
 
   defp find_in_results(results, id) do
     Enum.find(results, &(to_string(&1.id) == id))
@@ -376,34 +364,39 @@ defmodule BookshelvesWeb.HomeLive do
   end
 
   def handle_event("nav", %{"page" => page}, socket) do
-    {:noreply, push_patch(socket, to: ~p"/?page=#{page}")}
+    {:noreply,
+     push_patch(
+       socket,
+       to:
+         ~p"/?page=#{page}&status=#{socket.assigns.status_filter}&media=#{socket.assigns.media_filter}"
+     )}
   end
 
-  def handle_params(%{"page" => page}, _uri, socket) do
-    assigns = get_and_assign_page(page)
-    {:noreply, assign(socket, assigns) |> refresh_filtered()}
-  end
+  @impl true
+  def handle_params(params, _uri, socket) do
+    page = Map.get(params, "page", "1")
+    status_filter = Map.get(params, "status", "all")
+    media_filter = Map.get(params, "media", "book")
+    title = Map.get(params, "title", nil)
 
-  def handle_params(_params, _uri, socket) do
-    assigns = get_and_assign_page(nil)
-    {:noreply, assign(socket, assigns) |> refresh_filtered()}
-  end
+    page_data =
+      list_readings(
+        [page: page],
+        status_filter,
+        media_filter, 
+        title
+      )
 
-  defp get_and_assign_page(page_number) do
-    %{
-      entries: entries,
-      page_number: page_number,
-      page_size: page_size,
-      total_entries: total_entries,
-      total_pages: total_pages
-    } = list_readings(page: page_number)
-
-    [
-      readings: entries,
-      page_number: page_number,
-      page_size: page_size,
-      total_entries: total_entries,
-      total_pages: total_pages
-    ]
+    {:noreply,
+     assign(socket,
+       title_filter: title,
+       status_filter: status_filter,
+       media_filter: media_filter,
+       readings: page_data.entries,
+       page_number: page_data.page_number,
+       page_size: page_data.page_size,
+       total_pages: page_data.total_pages,
+       total_entries: page_data.total_entries
+     )}
   end
 end
