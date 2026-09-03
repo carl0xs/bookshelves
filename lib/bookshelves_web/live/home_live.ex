@@ -320,7 +320,10 @@ defmodule BookshelvesWeb.HomeLive do
     |> filter_title(title)
     |> filter_status(status_filter)
     |> filter_media(media_filter)
-    |> order_by([r], desc: r.inserted_at)
+    |> order_by([r],
+      asc: fragment("CASE WHEN ? = ? THEN 0 ELSE 1 END", r.status, ^"want_read"),
+      desc: r.inserted_at
+    )
     |> Repo.paginate(params)
   end
 
