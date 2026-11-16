@@ -6,7 +6,7 @@
 - [x] Update progress
 - [x] Fix typo module name
 - [x] Refactor to Components
-- [ ] Authentication
+- [x] Authentication
 - [x] More results
 - [x] Status Bar
 - [x] Remove reading
